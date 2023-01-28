@@ -1,19 +1,25 @@
 package cn.iocoder.yudao.module.system.service.quota;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.module.system.controller.admin.quota.vo.QuotaCreateReqVO;
 import cn.iocoder.yudao.module.system.controller.admin.quota.vo.QuotaExportReqVO;
 import cn.iocoder.yudao.module.system.controller.admin.quota.vo.QuotaPageReqVO;
 import cn.iocoder.yudao.module.system.controller.admin.quota.vo.QuotaUpdateReqVO;
 import cn.iocoder.yudao.module.system.convert.quota.QuotaConvert;
+import cn.iocoder.yudao.module.system.dal.dataobject.quota.QuotaActualStatisticsDO;
 import cn.iocoder.yudao.module.system.dal.dataobject.quota.QuotaDO;
+import cn.iocoder.yudao.module.system.dal.dataobject.quota.QuotaStatisticsDO;
 import cn.iocoder.yudao.module.system.dal.mysql.quota.QuotaMapper;
+import com.mchange.lang.LongUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import javax.annotation.Resource;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 
 /**
@@ -44,6 +50,27 @@ public class QuotaServiceImpl implements QuotaService {
         // 更新
         QuotaDO updateObj = QuotaConvert.INSTANCE.convert(updateReqVO);
         quotaMapper.updateById(updateObj);
+    }
+
+    @Override
+    public Long createAndUpdateQuota(List<QuotaCreateReqVO> createReqVO) {
+        List<QuotaCreateReqVO> update = createReqVO.stream()
+                .filter(item -> (item.getId() != null && item.getId()!=0L))
+                .collect(Collectors.toList());
+        List<QuotaCreateReqVO> create = createReqVO.stream()
+                .filter(item -> (item.getId() == null || item.getId()==0L))
+                .collect(Collectors.toList());
+        List<QuotaDO> creates = QuotaConvert.INSTANCE.convertList2(create);
+        if(CollectionUtil.isNotEmpty(create)) {
+            quotaMapper.insertBatch(creates);
+        }
+        List<QuotaDO> updates = QuotaConvert.INSTANCE.convertList2(update);
+        if(CollectionUtil.isNotEmpty(updates)) {
+            for (QuotaDO quotaDO : updates) {
+                quotaMapper.updateById(quotaDO);
+            }
+        }
+        return null;
     }
 
     @Override
@@ -85,5 +112,13 @@ public class QuotaServiceImpl implements QuotaService {
     @Override
     public List<QuotaDO> getQuotaListByUserId(Long userId) {
         return quotaMapper.selectListByUserId(userId);
+    }
+    @Override
+    public List<QuotaStatisticsDO> selectExpectEveryOne (){
+        return quotaMapper.selectExpectEveryOne();
+    }
+    @Override
+    public List<QuotaActualStatisticsDO> selectActualEveryOne (){
+        return quotaMapper.selectActualEveryOne();
     }
 }

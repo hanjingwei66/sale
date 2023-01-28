@@ -65,7 +65,22 @@ export default {
       listAllUserNames().then(response => {
         this.chart.setOption({
           xAxis: [{
-            data:  response.data,
+            data:  response.data.nickName,
+          }],
+          series: [{
+            name: '预期',
+            type: 'bar',
+            // stack: 'vistors',
+            barWidth: '10%',
+            data: response.data.expect,
+            animationDuration
+          },{
+            name: '实际',
+            type: 'bar',
+            // stack: 'vistors',
+            barWidth: '10%',
+            data: response.data.actual,
+            animationDuration
           }]
         })
       })
@@ -109,14 +124,14 @@ export default {
           type: 'bar',
           // stack: 'vistors',
           barWidth: '10%',
-          data: [79, 52, 200, 334, 390, 330, 220],
+          data: [79, 52, 200, 334, 390, 330, 220,79, 52, 200, 334, 390, 330, 220],
           animationDuration
         }, {
           name: '实际',
           type: 'bar',
           // stack: 'vistors',
           barWidth: '10%',
-          data: [80, 52, 200, 334, 390, 330, 220],
+          data: [80, 52, 200, 334, 390, 330, 220,80, 52, 200, 334, 390, 330, 220],
           animationDuration
         }]
       })

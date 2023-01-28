@@ -32,5 +32,6 @@ public interface QuotaConvert {
     PageResult<QuotaRespVO> convertPage(PageResult<QuotaDO> page);
 
     List<QuotaExcelVO> convertList02(List<QuotaDO> list);
+    List<QuotaDO> convertList2(List<QuotaCreateReqVO> list);
 
 }

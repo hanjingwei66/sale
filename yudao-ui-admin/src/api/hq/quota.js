@@ -17,7 +17,13 @@ export function updateQuota(data) {
     data: data
   })
 }
-
+export function createAndUpdateQuota(data) {
+  return request({
+    url: '/hq/quota/createAndUpdate',
+    method: 'post',
+    data: data
+  })
+}
 // 删除指标
 export function deleteQuota(id) {
   return request({

@@ -43,21 +43,19 @@ spring:
       primary: master
       datasource:
         master:
-          name: ruoyi-vue-pro
-          url: jdbc:mysql://400-infra.server.iocoder.cn:3306/${spring.datasource.dynamic.datasource.master.name}?useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=UTF-8&serverTimezone=CTT&nullCatalogMeansCurrent=true
-          driver-class-name: com.mysql.jdbc.Driver
+          url: jdbc:mysql://47.97.204.53:3306/ruoyi-vue-pro?allowMultiQueries=true&useUnicode=true&useSSL=false&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&autoReconnect=true&nullCatalogMeansCurrent=true
+          driver-class-name: com.mysql.cj.jdbc.Driver
           username: root
-          password: 3WLiVUBEwTbvAfsh
+          password: Hanjingwei@77521
         slave: # 模拟从库，可根据自己需要修改 # 模拟从库，可根据自己需要修改
-          name: ruoyi-vue-pro
-          url: jdbc:mysql://400-infra.server.iocoder.cn:3306/${spring.datasource.dynamic.datasource.slave.name}?useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=UTF-8&serverTimezone=CTT&nullCatalogMeansCurrent=true
-          driver-class-name: com.mysql.jdbc.Driver
+          url: jdbc:mysql://47.97.204.53:3306/ruoyi-vue-pro?useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=UTF-8&serverTimezone=CTT&nullCatalogMeansCurrent=true
+          driver-class-name: com.mysql.cj.jdbc.Driver
           username: root
-          password: 3WLiVUBEwTbvAfsh
+          password: Hanjingwei
 
   # Redis 配置。Redisson 默认的配置足够使用，一般不需要进行调优
   redis:
-    host: 400-infra.server.iocoder.cn # 地址
+    host: 47.97.204.53 # 地址
     port: 6379 # 端口
     database: 1 # 数据库索引
 #    password: 123456 # 密码，建议生产环境开启

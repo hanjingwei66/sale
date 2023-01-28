@@ -1,7 +1,5 @@
 <template>
   <div class="app-container">
-
-    <!-- 搜索工作栏 -->
     <!-- 搜索工作栏 -->
     <el-row :gutter="20">
       <!--部门数据-->
@@ -90,34 +88,30 @@
 
     <!-- 对话框(添加 / 修改) -->
     <el-dialog :title="title" :visible.sync="open" width="950px" append-to-body>
-      <el-form ref="form" :model="form" :inline="true" label-width="80px"
-               v-for="(domain, index) in dynamicValidateForm.item"
-               :label="'域名' + index"
-               :key="item.key"
-               :prop="'domains.' + index + '.value'"
-               :rules="{
-      // required: true, message: '域名不能为空', trigger: 'blur'
-    }">
+      <el-form ref="dynamicValidateForm" :model="dynamicValidateForm" :inline="true" label-width="80px"
+               v-for="(quota, index) in dynamicValidateForm.item"
+               :key="quota.id"
+               >
         <el-form-item label="周期" prop="stage">
 
           <div class="block">
             <el-date-picker
-              v-model="form.date"
+              v-model="quota.quotaMonth"
               type="month"
               placeholder="选择月">
             </el-date-picker>
           </div>
         </el-form-item>
         <el-form-item label="指标定额" prop="quota">
-          <el-input v-model="form.quota" placeholder="请输入指标定额" />
+          <el-input v-model="quota.quota" placeholder="请输入指标定额" />
         </el-form-item>
         <el-form-item label="单位" prop="unit">
-          <el-select v-model="form.unit" placeholder="请输入单位" clearable>
-            <el-option v-for="dict in this.getDictDatas(DICT_TYPE.HQ_UNIT)"
+          <el-select v-model="quota.unit" placeholder="请输入单位" clearable>
+            <el-option v-for="dict in unitDictDatas"
                        :key="dict.value" :label="dict.label" :value="dict.value"/>
           </el-select>
         </el-form-item>
-        <el-button @click="addIndex">+++</el-button>
+        <i class="el-icon-circle-plus-outline" @click="addIndex"></i>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -128,7 +122,7 @@
 </template>
 
 <script>
-import { createQuota, updateQuota, deleteQuota, getQuota, getQuotaPage, exportQuotaExcel,getBySaleId } from "@/api/hq/quota";
+import { createQuota, updateQuota, deleteQuota, getQuota, getQuotaPage, exportQuotaExcel,getBySaleId,createAndUpdateQuota} from "@/api/hq/quota";
 import {
   getQuotaList
 } from "@/api/system/user";
@@ -177,20 +171,23 @@ export default {
       // 角色选项
       roleOptions: [],
       // 表单参数
-      form: {
+      form: [{
         saleId :'',
         quota: '',
         stage: '',
         unit: '',
-        date: ''
+        date: '',
+        qutas:[]
       },
+      ],
       dynamicValidateForm:{
         item:[{
+          id: '',
           saleId :'',
           quota: '',
           stage: '',
           unit: '',
-          date: ''
+          quotaMonth: ''
         }
         ]
       },
@@ -237,12 +234,13 @@ export default {
       },
       // 是否显示弹出层（角色权限）
       openRole: false,
-
+      saleId: '',
       // 枚举
       SysCommonStatusEnum: CommonStatusEnum,
       // 数据字典
       statusDictDatas: getDictDatas(DICT_TYPE.COMMON_STATUS),
       sexDictDatas: getDictDatas(DICT_TYPE.SYSTEM_USER_SEX),
+      unitDictDatas: getDictDatas(DICT_TYPE.HQ_UNIT),
       isAdmin: false,
     };
   },
@@ -355,10 +353,11 @@ export default {
     handleUpdate(row) {
       // this.reset();
       const id = row.id;
-      this.form.saleId = row.id
+      this.saleId =row.id
       getBySaleId(id).then(response => {
         if(response.data!=null && response.data.length!=0){
-          this.form = response.data[0];
+          this.dynamicValidateForm.item = response.data;
+          this.dynamicValidateForm.item.forEach( item => item.saleId =id);
         }
         this.open = true;
         this.title = "修改指标";
@@ -367,26 +366,17 @@ export default {
     },
     /** 提交按钮 */
     submitForm() {
-      this.$refs["form"].validate(valid => {
-        if (!valid) {
-          return;
-        }
-        // 修改的提交
-        if (this.form.id != null) {
-          updateQuota(this.form).then(response => {
-            this.$modal.msgSuccess("修改成功");
-            this.open = false;
-            this.getList();
-          });
-          return;
-        }
+      // this.$refs["dynamicValidateForm"].validate(valid => {
+      //   if (!valid) {
+      //     return;
+      //   }
         // 添加的提交
-        createQuota(this.form).then(response => {
+        createAndUpdateQuota(this.dynamicValidateForm.item).then(response => {
           this.$modal.msgSuccess("新增成功");
           this.open = false;
           this.getList();
         });
-      });
+      // });
     },
     /** 删除按钮操作 */
     handleDelete(row) {
@@ -416,7 +406,7 @@ export default {
     },
     addIndex(){
       this.dynamicValidateForm.item.push({
-          saleId :'',
+          saleId :this.saleId,
           quota: '',
           stage: '',
           unit: '',

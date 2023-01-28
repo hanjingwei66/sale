@@ -11,6 +11,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.util.Date;
+
 /**
  * 指标 DO
  *
@@ -47,5 +49,9 @@ public class QuotaDO extends BaseDO {
      * 指标定额单位
      */
     private String unit;
+    /**
+     * 指标月份
+     */
+    private Date quotaMonth;
 
 }

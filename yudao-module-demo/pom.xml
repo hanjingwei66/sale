@@ -17,7 +17,6 @@
         demo 模块，主要实现 XXX、YYY、ZZZ 等功能。
     </description>
     <modules>
-        <module>yudao-module-demo-admin</module>
         <module>yudao-module-demo-api</module>
         <module>yudao-module-demo-biz</module>
     </modules>

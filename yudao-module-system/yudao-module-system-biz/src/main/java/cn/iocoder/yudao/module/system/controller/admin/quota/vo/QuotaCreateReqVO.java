@@ -11,7 +11,8 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public class QuotaCreateReqVO extends QuotaBaseVO {
-
+    @ApiModelProperty(value = "id")
+    private Long id;
     @ApiModelProperty(value = "销售id")
     private Long saleId;
 

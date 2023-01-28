@@ -1,5 +1,6 @@
 package cn.iocoder.yudao.module.system.controller.admin.quota;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.iocoder.yudao.framework.common.pojo.CommonResult;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.excel.core.util.ExcelUtils;
@@ -60,7 +61,12 @@ public class QuotaController {
         quotaService.updateQuota(updateReqVO);
         return success(true);
     }
-
+    @PostMapping("/createAndUpdate")
+    @ApiOperation("创建指标")
+    @PreAuthorize("@ss.hasPermission('hq:quota:create')")
+    public CommonResult<Long> createAndUpdateQuota(@Valid @RequestBody List<QuotaCreateReqVO> quotaReqVO) {
+        return success(quotaService.createAndUpdateQuota(quotaReqVO));
+    }
     @DeleteMapping("/delete")
     @ApiOperation("删除指标")
     @ApiImplicitParam(name = "id", value = "编号", required = true, dataTypeClass = Long.class)
@@ -85,6 +91,9 @@ public class QuotaController {
     @PreAuthorize("@ss.hasPermission('hq:quota:query')")
     public CommonResult<List<QuotaRespVO>> getQuotaBySaleId(@RequestParam("id") Long id) {
         List<QuotaDO> list = quotaService.getQuotaBySaleId(id);
+        if(CollectionUtil.isEmpty(list)){
+            list.add(new QuotaDO());
+        }
         return success(QuotaConvert.INSTANCE.convertList(list));
     }
     @GetMapping("/list")

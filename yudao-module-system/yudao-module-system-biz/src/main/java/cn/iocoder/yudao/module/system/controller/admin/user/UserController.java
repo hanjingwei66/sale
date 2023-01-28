@@ -6,7 +6,9 @@ import cn.iocoder.yudao.module.system.controller.admin.user.vo.quato.UserQuatoRe
 import cn.iocoder.yudao.module.system.controller.admin.user.vo.user.*;
 import cn.iocoder.yudao.module.system.convert.user.UserConvert;
 import cn.iocoder.yudao.module.system.dal.dataobject.dept.DeptDO;
+import cn.iocoder.yudao.module.system.dal.dataobject.quota.QuotaActualStatisticsDO;
 import cn.iocoder.yudao.module.system.dal.dataobject.quota.QuotaDO;
+import cn.iocoder.yudao.module.system.dal.dataobject.quota.QuotaStatisticsDO;
 import cn.iocoder.yudao.module.system.dal.dataobject.user.AdminUserDO;
 import cn.iocoder.yudao.module.system.service.dept.DeptService;
 import cn.iocoder.yudao.module.system.service.quota.QuotaService;
@@ -32,6 +34,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.*;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static cn.iocoder.yudao.framework.common.pojo.CommonResult.success;
@@ -138,6 +142,10 @@ public class UserController {
         pageResult.getList().forEach(user -> {
             UserQuatoRespVO userQuatoRespVO = UserConvert.INSTANCE.convert3(user);
             List<QuotaDO> QuotaDOs = quotaService.getQuotaListByUserId(user.getId());
+            if(null==QuotaDOs){
+                QuotaDO init = new QuotaDO();
+                QuotaDOs.add(init);
+            }
             userQuatoRespVO.setQuotas(QuotaDOs);
             userQuatoRespVO.setDept(UserConvert.INSTANCE.convert(deptMap.get(user.getDeptId())));
             userList.add(userQuatoRespVO);
@@ -156,12 +164,20 @@ public class UserController {
 
     @GetMapping("/list-all-user-name")
     @ApiOperation(value = "获取用户精简信息列表", notes = "只包含被开启的用户，主要用于前端的下拉选项")
-    public CommonResult<List<String>> getAllUserNames() {
+    public CommonResult<Map<String , List>> getAllUserNames() {
         // 获用户门列表，只要开启状态的
         List<AdminUserDO> list = userService.getUsersByStatus(CommonStatusEnum.ENABLE.getStatus());
         List<String> collect = list.stream().map(item -> item.getNickname()).collect(Collectors.toList());
+        List<QuotaStatisticsDO> expect = quotaService.selectExpectEveryOne();
+        Map<String , List> result = new HashMap<>();
+        List<String> nickNameList = expect.stream().map(quotaStatisticsDO -> quotaStatisticsDO.getNickName()).collect(Collectors.toList());
+        List<Long> actualList = expect.stream().map(quotaStatisticsDO -> quotaStatisticsDO.getQuotaActualSum()).collect(Collectors.toList());
+        List<Long> expectList = expect.stream().map(quotaStatisticsDO -> quotaStatisticsDO.getQuotaExpetSum()).collect(Collectors.toList());
+        result.put("nickName",nickNameList);
+        result.put("actual",actualList);
+        result.put("expect",expectList);
         // 排序后，返回给前端
-        return success(collect);
+        return success(result);
     }
     @GetMapping("/get")
     @ApiOperation("获得用户详情")

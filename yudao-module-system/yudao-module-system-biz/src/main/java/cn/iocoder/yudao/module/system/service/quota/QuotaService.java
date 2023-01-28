@@ -5,11 +5,14 @@ import cn.iocoder.yudao.module.system.controller.admin.quota.vo.QuotaCreateReqVO
 import cn.iocoder.yudao.module.system.controller.admin.quota.vo.QuotaExportReqVO;
 import cn.iocoder.yudao.module.system.controller.admin.quota.vo.QuotaPageReqVO;
 import cn.iocoder.yudao.module.system.controller.admin.quota.vo.QuotaUpdateReqVO;
+import cn.iocoder.yudao.module.system.dal.dataobject.quota.QuotaActualStatisticsDO;
 import cn.iocoder.yudao.module.system.dal.dataobject.quota.QuotaDO;
+import cn.iocoder.yudao.module.system.dal.dataobject.quota.QuotaStatisticsDO;
 
 import javax.validation.Valid;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 指标 Service 接口
@@ -32,6 +35,8 @@ public interface QuotaService {
      * @param updateReqVO 更新信息
      */
     void updateQuota(@Valid QuotaUpdateReqVO updateReqVO);
+
+    Long createAndUpdateQuota(@Valid List<QuotaCreateReqVO> createReqVO);
 
     /**
      * 删除指标
@@ -76,5 +81,6 @@ public interface QuotaService {
 
 
     List<QuotaDO>  getQuotaListByUserId(Long userId );
-
+    List<QuotaStatisticsDO> selectExpectEveryOne ();
+    List<QuotaActualStatisticsDO> selectActualEveryOne ();
 }

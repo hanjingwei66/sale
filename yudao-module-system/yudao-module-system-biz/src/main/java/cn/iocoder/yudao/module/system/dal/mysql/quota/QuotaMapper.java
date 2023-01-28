@@ -5,10 +5,14 @@ import cn.iocoder.yudao.framework.mybatis.core.mapper.BaseMapperX;
 import cn.iocoder.yudao.framework.mybatis.core.query.LambdaQueryWrapperX;
 import cn.iocoder.yudao.module.system.controller.admin.quota.vo.QuotaExportReqVO;
 import cn.iocoder.yudao.module.system.controller.admin.quota.vo.QuotaPageReqVO;
+import cn.iocoder.yudao.module.system.dal.dataobject.quota.QuotaActualStatisticsDO;
 import cn.iocoder.yudao.module.system.dal.dataobject.quota.QuotaDO;
+import cn.iocoder.yudao.module.system.dal.dataobject.quota.QuotaStatisticsDO;
+import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 指标 Mapper
@@ -38,4 +42,7 @@ public interface QuotaMapper extends BaseMapperX<QuotaDO> {
                 .eq(QuotaDO::getSaleId, saleId));
 
     }
+
+    List<QuotaStatisticsDO> selectExpectEveryOne ();
+    List<QuotaActualStatisticsDO> selectActualEveryOne ();
 }

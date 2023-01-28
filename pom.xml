@@ -19,7 +19,6 @@
         <module>yudao-module-infra</module>
         <module>yudao-module-pay</module>
         <module>yudao-module-demo</module>
-        <module>yudao-module-demo-api</module>
         <module>yudao-module-hq</module>
     </modules>
 

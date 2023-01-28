@@ -20,4 +20,7 @@ public class QuotaRespVO extends QuotaBaseVO {
     @ApiModelProperty(value = "创建时间", required = true)
     private Date createTime;
 
+    @ApiModelProperty(value = "销售id", required = true)
+    private Long saleId;
+
 }
