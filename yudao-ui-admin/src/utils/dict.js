@@ -60,6 +60,10 @@ export const DICT_TYPE = {
   HQ_USER_STATUS: 'hq_user_status',//启用状态
   HQ_UNIT: 'hq_unit',//金钱单位
   HQ_STAGE: 'hq_stage',//时间周期
+  RECRUIT_STATUS: 'recruit_status',
+  PROJECT_CATEGORY: 'project_category',
+  IS_SMOKE: 'is_smoke',
+
 }
 
 /**

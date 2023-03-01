@@ -68,3 +68,9 @@ export function listSimpleDictDatas() {
     method: 'get',
   })
 }
+export function getDictArea() {
+  return request({
+    url: '/system/area/list-area',
+    method: 'get',
+  })
+}

@@ -20,6 +20,7 @@
         <module>yudao-module-pay</module>
         <module>yudao-module-demo</module>
         <module>yudao-module-hq</module>
+        <module>yudao-module-vx</module>
     </modules>
 
     <name>${project.artifactId}</name>

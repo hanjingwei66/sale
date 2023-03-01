@@ -233,6 +233,7 @@ export default {
       // 表单参数
       form: {
         status: CommonStatusEnum.ENABLE,
+        // status: false,
       },
       // 表单校验
       rules: {

@@ -1,0 +1,71 @@
+package cn.iocoder.yudao.module.system.controller.admin.dict;
+
+import cn.hutool.core.collection.CollectionUtil;
+import cn.iocoder.yudao.framework.common.enums.CommonStatusEnum;
+import cn.iocoder.yudao.framework.common.pojo.CommonResult;
+import cn.iocoder.yudao.framework.common.util.collection.SetUtils;
+import cn.iocoder.yudao.module.system.controller.admin.auth.vo.AuthMenuRespVO;
+import cn.iocoder.yudao.module.system.controller.admin.dict.vo.area.DictAreaVO;
+import cn.iocoder.yudao.module.system.convert.area.AreaConvert;
+import cn.iocoder.yudao.module.system.convert.auth.AuthConvert;
+import cn.iocoder.yudao.module.system.dal.dataobject.area.AreaDO;
+import cn.iocoder.yudao.module.system.dal.dataobject.permission.MenuDO;
+import cn.iocoder.yudao.module.system.dal.redis.common.AreaRedisDAO;
+import cn.iocoder.yudao.module.system.enums.permission.MenuTypeEnum;
+import cn.iocoder.yudao.module.system.service.area.SystemAreaService;
+import cn.iocoder.yudao.module.system.service.permission.PermissionService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.annotation.Resource;
+import java.util.List;
+import java.util.Set;
+
+import static cn.iocoder.yudao.framework.common.pojo.CommonResult.success;
+import static cn.iocoder.yudao.framework.security.core.util.SecurityFrameworkUtils.getLoginUserId;
+import static java.time.Duration.ZERO;
+import static java.util.Collections.singleton;
+
+@Api(tags = "管理后台 - 地区管理")
+@RestController
+@RequestMapping("/system/area")
+@Validated
+@Slf4j
+public class DictSysAreaController {
+//    @Resource
+//    private PermissionService permissionService;
+    @Resource
+    private AreaRedisDAO areaRedisDAO;
+    @Autowired
+    private SystemAreaService systemAreaService;
+//    public CommonResult<List<AuthMenuRespVO>> getMenus() {
+//        // 获得角色列表
+//        Set<Long> roleIds = permissionService.getUserRoleIdsFromCache(getLoginUserId(), singleton(CommonStatusEnum.ENABLE.getStatus()));
+//        // 获得用户拥有的菜单列表
+//        List<MenuDO> menuList = permissionService.getRoleMenuListFromCache(roleIds,
+//                SetUtils.asSet(MenuTypeEnum.DIR.getType(), MenuTypeEnum.MENU.getType()), // 只要目录和菜单类型
+//                singleton(CommonStatusEnum.ENABLE.getStatus())); // 只要开启的
+//        // 转换成 Tree 结构返回
+//        return success(AuthConvert.INSTANCE.buildMenuTree(menuList));
+//    }
+    @GetMapping("/list-area")
+    @ApiOperation("地区树形字典")
+    public CommonResult<List<DictAreaVO>> getArea() {
+//        List<AreaDO> areaList = systemAreaService.getAreaList();
+        List<AreaDO> areaList=null;
+        areaList = areaRedisDAO.getList("areaList");
+        if(CollectionUtil.isEmpty(areaList)) {
+            areaList = systemAreaService.getAreaList();
+            areaRedisDAO.setList("areaList",areaList,ZERO);
+        }
+        // 转换成 Tree 结构返回
+        return success(AreaConvert.INSTANCE.buildMenuTree(areaList));
+    }
+
+}
